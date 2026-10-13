@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spyra — See your ad through your competitors' eyes</title>
+<meta name="description" content="Spyra finds your real competitors in the Facebook Ads Library, drops your ad into the same feed and lets 30 AI buyers decide who wins the scroll. Head-to-head analysis, playbook and PDF report.">
+<meta property="og:title" content="Spyra — Will your ad survive the scroll?">
+<meta property="og:description" content="Real competitors from the Facebook Ads Library. 30 AI buyers. One honest verdict before you spend.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#141413">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23D97757'%3E%3Crect x='11' y='1' width='2' height='10' rx='1'/%3E%3Crect x='11' y='13' width='2' height='10' rx='1'/%3E%3Crect x='1' y='11' width='10' height='2' rx='1'/%3E%3Crect x='13' y='11' width='10' height='2' rx='1'/%3E%3Crect x='11' y='2.5' width='2' height='8.5' rx='1' transform='rotate(45 12 12)'/%3E%3Crect x='11' y='13' width='2' height='8.5' rx='1' transform='rotate(45 12 12)'/%3E%3Crect x='11' y='2.5' width='2' height='8.5' rx='1' transform='rotate(-45 12 12)'/%3E%3Crect x='11' y='13' width='2' height='8.5' rx='1' transform='rotate(-45 12 12)'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --clay: #D97757; --clay-deep: #C15F3C; --clay-tint: #FBEDE6; --clay-soft: #F4CDBD;
+  --ink: #141413; --ink-2: #3D3D3A; --muted: #73726C; --line: #E8E6DC; --cream: #F7F6F1; --bg: #FFFFFF;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 13px 22px; font-weight: 700; font-size: 15px; transition: transform .15s, box-shadow .15s, background .15s; white-space: nowrap; }
+.btn:hover { transform: translateY(-2px); }
+.btn.primary { background: var(--clay); color: #fff; box-shadow: 0 10px 30px -10px #D9775799; }
+.btn.primary:hover { background: var(--clay-deep); box-shadow: 0 16px 36px -12px #D97757bb; }
+.btn.ghost { border: 1px solid #ffffff33; color: #fff; }
+.btn.ghost:hover { background: #ffffff12; }
+.eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--clay-deep); font-weight: 700; margin-bottom: 12px; }
+h2 { font-size: clamp(30px, 4vw, 44px); letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 14px; }
+.lead { font-size: 18px; color: var(--ink-2); max-width: 640px; margin: 0; }
+section { padding: 96px 0; }
+
+/* nav */
+nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .25s, border-color .25s; border-bottom: 1px solid transparent; }
+nav.solid { background: #141413e6; backdrop-filter: blur(12px); border-color: #ffffff14; }
+nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: -0.02em; color: #fff; }
+.logo svg { animation: spin 18s linear infinite; }
+.navlinks { display: flex; align-items: center; gap: 28px; font-size: 14px; font-weight: 500; color: #D9D6CC; }
+.navlinks a:not(.btn):hover { color: #fff; }
+.navlinks .btn { padding: 9px 16px; font-size: 14px; }
+
+/* hero */
+.hero { position: relative; background: var(--ink); color: #fff; padding: 140px 0 90px; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse at 70% 40%, #000 20%, transparent 75%); }
+.glow { position: absolute; width: 620px; height: 620px; border-radius: 50%; background: radial-gradient(circle, #D9775755, transparent 65%); right: -120px; top: -80px; filter: blur(20px); animation: float 9s ease-in-out infinite; }
+.hero .wrap { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #ffffff26; background: #ffffff0d; border-radius: 999px; padding: 6px 14px 6px 8px; font-size: 13px; color: #D9D6CC; margin-bottom: 22px; }
+.badge b { background: var(--clay); color: #fff; border-radius: 999px; padding: 2px 9px; font-size: 11px; letter-spacing: .04em; }
+.hero h1 { font-size: clamp(40px, 6vw, 68px); line-height: 1.02; letter-spacing: -0.04em; margin: 0 0 20px; font-weight: 800; }
+.hero h1 em { font-style: normal; background: linear-gradient(90deg, var(--clay), #F2B49B); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero p.sub { font-size: 19px; color: #B9B6AA; max-width: 560px; margin: 0 0 32px; }
+.ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.proof { display: flex; gap: 28px; margin-top: 40px; flex-wrap: wrap; }
+.proof div { font-size: 13px; color: #B9B6AA; }
+.proof b { display: block; font-family: var(--mono); font-size: 26px; color: #fff; }
+
+/* phone mock */
+.stage { position: relative; display: flex; justify-content: center; }
+.phone { width: 290px; border: 10px solid #2B2A27; border-radius: 44px; background: #fff; color: var(--ink); overflow: hidden; box-shadow: 0 40px 80px -30px #000, 0 0 0 1px #ffffff14; transform: rotate(-3deg); animation: bob 6s ease-in-out infinite; }
+.ph-top { height: 26px; display: grid; place-items: center; }
+.ph-top span { width: 80px; height: 18px; background: #2B2A27; border-radius: 20px; }
+.post { padding: 10px 14px 16px; }
+.post-h { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+.post-h i { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(140deg, var(--clay), var(--clay-deep)); }
+.post-h small { display: block; font-weight: 500; color: var(--muted); font-size: 10px; }
+.post p { font-size: 11px; margin: 8px 0; color: var(--ink-2); }
+.creative { height: 210px; border-radius: 10px; background: radial-gradient(circle at 30% 20%, #3a1f17, #141413 70%); display: grid; place-items: center; text-align: center; color: #fff; padding: 16px; position: relative; overflow: hidden; }
+.creative b { font-size: 22px; letter-spacing: -0.02em; line-height: 1.1; }
+.creative b span { color: var(--clay); }
+.creative::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, #ffffff22 50%, transparent 70%); animation: shine 4s ease-in-out infinite; }
+.post-cta { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 10px; color: var(--muted); }
+.post-cta button { border: 0; background: #E4E6EB; border-radius: 6px; padding: 6px 10px; font: 700 10px Inter; }
+.stopped { margin-top: 12px; background: var(--clay); color: #fff; text-align: center; border-radius: 99px; font: 700 12px var(--mono); padding: 7px; }
+.crowd { position: absolute; right: -18px; bottom: 30px; background: #1E1D1B; border: 1px solid #ffffff1f; border-radius: 18px; padding: 14px; width: 190px; box-shadow: 0 30px 60px -20px #000; }
+.crowd small { display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #B9B6AA; margin-bottom: 10px; font-weight: 700; }
+.dots { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.dots i { aspect-ratio: 1; border-radius: 6px; background: #ffffff1a; animation: stop 6s infinite; }
+.dots i.s { animation-name: stopOn; }
+.crowd .num { font: 700 22px var(--mono); color: #fff; margin-top: 10px; }
+.crowd .num span { color: var(--muted); font-size: 13px; }
+
+/* inputs strip */
+.strip { background: var(--cream); border-bottom: 1px solid var(--line); padding: 26px 0; }
+.strip .wrap { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+.chip { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-weight: 600; color: var(--ink); }
+.chip svg { width: 16px; height: 16px; stroke: var(--clay); }
+
+/* steps */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 48px; counter-reset: s; }
+.step { position: relative; border: 1px solid var(--line); border-radius: 18px; padding: 26px 22px; background: #fff; transition: transform .2s, box-shadow .2s, border-color .2s; }
+.step:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -28px #14141355; border-color: var(--clay-soft); }
+.step::before { counter-increment: s; content: '0' counter(s); font: 800 40px var(--mono); color: var(--clay-soft); display: block; margin-bottom: 12px; line-height: 1; }
+.step h3 { margin: 0 0 8px; font-size: 17px; letter-spacing: -0.01em; }
+.step p { margin: 0; font-size: 14px; color: var(--ink-2); }
+
+/* features */
+.features { background: var(--cream); }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 48px; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 26px; transition: transform .2s, box-shadow .2s; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -28px #14141355; }
+.ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--clay-tint); margin-bottom: 16px; }
+.ic svg { width: 22px; height: 22px; stroke: var(--clay-deep); }
+.card h3 { margin: 0 0 8px; font-size: 17px; }
+.card p { margin: 0; font-size: 14px; color: var(--ink-2); }
+.card.dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+.card.dark p { color: #B9B6AA; } .card.dark .ic { background: #ffffff14; } .card.dark .ic svg { stroke: var(--clay); }
+
+/* head to head */
+.h2h { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: center; }
+.vs { border: 1px solid var(--clay-soft); border-radius: 22px; padding: 22px; background: #fff; box-shadow: 0 40px 80px -40px #14141355; }
+.vs-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.vs-head b { font-size: 17px; } .vs-head b span { color: var(--clay); font-family: var(--mono); font-size: 13px; margin: 0 4px; }
+.score { display: flex; gap: 6px; }
+.score span { border-radius: 10px; padding: 6px 12px; text-align: center; font: 800 20px var(--mono); border: 1px solid var(--line); min-width: 50px; }
+.score small { display: block; font: 700 9px Inter; text-transform: uppercase; letter-spacing: .05em; opacity: .8; }
+.score .y { background: var(--clay); color: #fff; border-color: var(--clay); } .score .t { background: var(--ink); color: #fff; border-color: var(--ink); }
+.row { display: grid; grid-template-columns: 130px 1fr auto; gap: 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.row b { font-size: 13px; } .row span { color: var(--ink-2); }
+.edge { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; border-radius: 99px; padding: 3px 10px; background: var(--cream); }
+.edge.y { background: var(--clay); color: #fff; } .edge.t { background: var(--ink); color: #fff; }
+.do { margin-top: 14px; display: flex; gap: 10px; align-items: flex-start; background: linear-gradient(90deg, var(--clay-tint), #fff); border: 1px dashed var(--clay-soft); border-radius: 12px; padding: 12px; font-size: 13px; }
+.do i { flex: none; width: 24px; height: 24px; border-radius: 7px; background: var(--clay); color: #fff; display: grid; place-items: center; font-style: normal; font-weight: 800; }
+.ticks { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 12px; }
+.ticks li { display: flex; gap: 12px; font-size: 15px; color: var(--ink-2); }
+.ticks li::before { content: '✓'; flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--clay-tint); color: var(--clay-deep); display: grid; place-items: center; font-weight: 800; font-size: 12px; }
+
+/* honesty band */
+.honest { background: var(--ink); color: #fff; }
+.honest .lead { color: #B9B6AA; }
+.tags { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 40px; }
+.tag { border: 1px solid #ffffff1f; border-radius: 18px; padding: 24px; background: #ffffff08; }
+.tag em { font-style: normal; display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; border-radius: 99px; padding: 3px 10px; margin-bottom: 12px; }
+.tag.f em { background: #2F7D4F; } .tag.a em { background: var(--clay); } .tag.s em { background: #ffffff26; }
+.tag p { margin: 0; color: #D9D6CC; font-size: 14px; }
+
+/* cta */
+.final { text-align: center; }
+.final .box { border-radius: 28px; padding: 64px 24px; background: radial-gradient(circle at 50% 0%, #D9775733, transparent 60%), var(--cream); border: 1px solid var(--line); }
+.final .lead { margin: 0 auto 28px; }
+footer { border-top: 1px solid var(--line); padding: 28px 0; font-size: 13px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+/* reveal */
+.rv { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+.rv.in { opacity: 1; transform: none; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float { 50% { transform: translate(-30px, 30px); } }
+@keyframes bob { 50% { transform: rotate(-3deg) translateY(-10px); } }
+@keyframes shine { 0%, 60% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+@keyframes stop { 0%, 100% { background: #ffffff1a; } }
+@keyframes stopOn { 0%, 15% { background: #ffffff1a; } 25%, 85% { background: var(--clay); box-shadow: 0 0 12px #D9775799; } 100% { background: #ffffff1a; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .rv { opacity: 1; transform: none; } }
+
+@media (max-width: 960px) {
+  .hero .wrap, .h2h { grid-template-columns: 1fr; }
+  .stage { margin-top: 20px; }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid, .tags { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .navlinks a:not(.btn) { display: none; }
+}
+@media (max-width: 600px) {
+  .wrap { padding: 0 16px; }
+  section { padding: 72px 0; }
+  .hero { padding: 116px 0 70px; }
+  .steps, .grid, .tags { grid-template-columns: 1fr; }
+  .crowd { right: -4px; width: 160px; }
+  .phone { width: 250px; }
+  .row { grid-template-columns: 1fr auto; } .row span { grid-column: 1 / -1; grid-row: 2; }
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Spyra home">
+      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><g fill="#D97757">
+        <rect x="11" y="1" width="2" height="10" rx="1"/><rect x="11" y="2.5" width="2" height="8.5" rx="1" transform="rotate(30 12 12)"/>
+        <rect x="11" y="1" width="2" height="10" rx="1" transform="rotate(60 12 12)"/><rect x="11" y="2.5" width="2" height="8.5" rx="1" transform="rotate(90 12 12)"/>
+        <rect x="11" y="1" width="2" height="10" rx="1" transform="rotate(120 12 12)"/><rect x="11" y="2.5" width="2" height="8.5" rx="1" transform="rotate(150 12 12)"/>
+        <rect x="11" y="1" width="2" height="10" rx="1" transform="rotate(180 12 12)"/><rect x="11" y="2.5" width="2" height="8.5" rx="1" transform="rotate(210 12 12)"/>
+        <rect x="11" y="1" width="2" height="10" rx="1" transform="rotate(240 12 12)"/><rect x="11" y="2.5" width="2" height="8.5" rx="1" transform="rotate(270 12 12)"/>
+        <rect x="11" y="1" width="2" height="10" rx="1" transform="rotate(300 12 12)"/><rect x="11" y="2.5" width="2" height="8.5" rx="1" transform="rotate(330 12 12)"/>
+      </g></svg>
+      Spyra
+    </a>
+    <div class="navlinks">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#h2h">Head-to-head</a>
+      <a class="btn primary" href="https://app.spyra.ai">Launch app →</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <div>
+      <div class="badge"><b>NEW</b> Head-to-head vs your #1 competitor</div>
+      <h1>Will your ad <em>survive the scroll?</em></h1>
+      <p class="sub">Spyra pulls your real competitors from the Facebook Ads Library, drops your ad into the same feed and lets 30 AI buyers decide who wins the thumb, before you spend a rupee on media.</p>
+      <div class="ctas">
+        <a class="btn primary" href="https://app.spyra.ai">Test your ad →</a>
+        <a class="btn ghost" href="#how">See how it works</a>
+      </div>
+      <div class="proof">
+        <div><b>30</b>AI buyer personas</div>
+        <div><b>10</b>points, head to head</div>
+        <div><b>4</b>input types</div>
+      </div>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="phone">
+        <div class="ph-top"><span></span></div>
+        <div class="post">
+          <div class="post-h"><i></i><div>Your brand<small>Sponsored</small></div></div>
+          <p>Stop guessing. Know which hook wins before you launch.</p>
+          <div class="creative"><b>Become the<br><span>#1 choice</span><br>in your market</b></div>
+          <div class="post-cta"><span>yourbrand.com</span><button>Learn more</button></div>
+          <div class="stopped" id="stoppedPill">19 of 30 stopped</div>
+        </div>
+      </div>
+      <div class="crowd">
+        <small>30 buyers · live</small>
+        <div class="dots" id="dots"></div>
+        <div class="num"><span id="cnt">0</span><span>/30 stopped</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="strip">
+  <div class="wrap">
+    <span>Works with</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Ad copy</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg>Image ads</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="14" height="14" rx="3"/><path d="m17 10 4-2v8l-4-2"/></svg>Video ads</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/></svg>Instagram · Facebook · YouTube links</span>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">How it works</div>
+      <h2>From one ad to a battle plan in minutes</h2>
+      <p class="lead">No setup, no pixel, no ad account access. Drop in the ad you're about to run and Spyra does the rest.</p>
+    </div>
+    <div class="steps">
+      <div class="step rv"><h3>Drop in your ad</h3><p>Paste the copy, upload the image or video, or share a link. Spyra reads the hook, offer, visuals and voiceover.</p></div>
+      <div class="step rv"><h3>Find real competitors</h3><p>We scan the Facebook Ads Library and keep only advertisers selling what you sell, each backed by a quote from their own ad.</p></div>
+      <div class="step rv"><h3>Run the scroll test</h3><p>Your ad and theirs go into one feed. 30 AI buyers matched to your audience scroll it and tell you who stopped them, and why.</p></div>
+      <div class="step rv"><h3>Get your playbook</h3><p>A point-by-point head-to-head, what to steal, where to attack, new hooks to test and a PDF report to share.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">Features</div>
+      <h2>Everything you'd want a strategist to tell you</h2>
+      <p class="lead">Built for founders, marketers and agencies who want to know where an ad stands before the money goes out.</p>
+    </div>
+    <div class="grid">
+      <div class="card rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div><h3>Real competitors, not guesses</h3><p>Every advertiser is checked against your offer. Direct, indirect or noise, with the exact line from their ad as proof.</p></div>
+      <div class="card rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c2.8 0 5 2.2 5 5"/></svg></div><h3>30-buyer scroll test</h3><p>See who stopped, how long they watched, who would click, and every buyer's reason in their own words.</p></div>
+      <div class="card dark rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 12h6M14 12h6M10 7l-6 5 6 5M14 7l6 5-6 5"/></svg></div><h3>Head-to-head vs your #1 rival</h3><p>Hook, offer, trust, urgency, creative and more, compared side by side with a clear "do this" for every point.</p></div>
+      <div class="card rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="14" height="14" rx="3"/><path d="m17 10 4-2v8l-4-2"/></svg></div><h3>Real video analysis</h3><p>Key frames, voiceover transcript and a drop-off timeline, so you know which second loses people.</p></div>
+      <div class="card rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></div><h3>Market visuals</h3><p>Messaging themes, formats, placements and CTAs your market actually uses, counted from real ads.</p></div>
+      <div class="card rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 18v-6M9 15l3 3 3-3"/></svg></div><h3>Playbook + PDF report</h3><p>Recommendations by priority, fresh ad copy ideas and a polished PDF you can send to your team or client.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="h2h">
+  <div class="wrap h2h">
+    <div class="rv">
+      <div class="eyebrow">Head-to-head</div>
+      <h2>Know exactly where you win, and where you lose</h2>
+      <p class="lead">Spyra picks the rival that threatens you most and compares both ads point by point, quoting the real words from each.</p>
+      <ul class="ticks">
+        <li>A clear winner for every point, with the reason</li>
+        <li>Measured numbers: buyers stopped, clicks, watch time</li>
+        <li>What to adapt from them, and where to attack</li>
+        <li>An action plan, highest impact first</li>
+      </ul>
+    </div>
+    <div class="vs rv" aria-label="Example head-to-head">
+      <div class="vs-head">
+        <b>Your ad <span>vs</span> Top rival</b>
+        <div class="score"><span class="y">6<small>you</small></span><span>1<small>tie</small></span><span class="t">3<small>them</small></span></div>
+      </div>
+      <div class="row"><b>Hook</b><span>Bold promise beats their generic opener</span><em class="edge y">You</em></div>
+      <div class="row"><b>Offer &amp; price</b><span>They show a price and a refund guarantee</span><em class="edge t">Them</em></div>
+      <div class="row"><b>Trust &amp; proof</b><span>Both lean on certificates, neither on results</span><em class="edge">Tie</em></div>
+      <div class="row"><b>Call to action</b><span>Your CTA names the next step clearly</span><em class="edge y">You</em></div>
+      <div class="do"><i>→</i><div><b>Do this:</b> add a visible price anchor and a risk-free line in the first two lines of your copy.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="honest">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow" style="color: var(--clay-soft)">Built on evidence</div>
+      <h2>You always know where an insight came from</h2>
+      <p class="lead">Spyra labels every piece of the report, so you can tell hard data from AI judgement at a glance.</p>
+    </div>
+    <div class="tags">
+      <div class="tag f rv"><em>From their ads</em><p>Hooks, offers, ad counts and run times copied straight from the public Facebook Ads Library.</p></div>
+      <div class="tag a rv"><em>AI read</em><p>Positioning, strengths and weaknesses, always grounded in a quote from the competitor's own copy.</p></div>
+      <div class="tag s rv"><em>Simulated</em><p>Buyer reactions are AI estimates to guide decisions, not real audience data.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <div class="box rv">
+      <div class="eyebrow">Ready when you are</div>
+      <h2>Test your next ad before the market does</h2>
+      <p class="lead">One ad in. Real competitors, 30 buyers and a head-to-head verdict out.</p>
+      <a class="btn primary" href="https://app.spyra.ai">Launch Spyra →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr"></span> Spyra · Competitive ad intelligence</span>
+    <span>Ads data: public Facebook Ads Library · Buyer reactions are AI simulations</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear()
+  const nav = document.getElementById('nav')
+  const onScroll = () => nav.classList.toggle('solid', scrollY > 20)
+  addEventListener('scroll', onScroll, { passive: true }); onScroll()
+
+  // 30 buyers: 19 stop, staggered so the grid lights up like the live scroll test.
+  const dots = document.getElementById('dots'), stops = new Set()
+  while (stops.size < 19) stops.add(Math.floor(Math.random() * 30))
+  for (let i = 0; i < 30; i++) {
+    const d = document.createElement('i')
+    if (stops.has(i)) { d.className = 's'; d.style.animationDelay = (Math.random() * 0.6).toFixed(2) + 's' }
+    dots.appendChild(d)
+  }
+  const cnt = document.getElementById('cnt')
+  const tick = () => { let n = 0; const t = setInterval(() => { cnt.textContent = ++n; if (n >= 19) clearInterval(t) }, 45) }
+  tick(); setInterval(tick, 6000)
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.15 })
+  document.querySelectorAll('.rv').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 80 + 'ms'; io.observe(el) })
+</script>
+</body>
+</html>
