@@ -1,0 +1,17 @@
+# systemd service: keeps the portal running and restarts it after crashes or reboots.
+# Install: sudo cp deploy/ads-portal.service /etc/systemd/system/ && sudo systemctl enable --now ads-portal
+[Unit]
+Description=Ads competitor analysis portal
+After=network.target
+
+[Service]
+User=adsapp
+WorkingDirectory=/home/adsapp/ads-competitor-analysis
+EnvironmentFile=/home/adsapp/ads-competitor-analysis/.env
+Environment=PORT=8765
+ExecStart=/home/adsapp/ads-competitor-analysis/.venv/bin/python server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

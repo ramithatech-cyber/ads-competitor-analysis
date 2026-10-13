@@ -1,4 +1,6 @@
-streamlit
+fastapi
+uvicorn
+python-multipart
 openai
 playwright
 plotly
@@ -7,3 +9,4 @@ python-dotenv
 opencv-python-headless
 imageio-ffmpeg
 yt-dlp
+streamlit
