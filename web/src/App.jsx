@@ -1,20 +1,13 @@
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FeedControls, GridLegend, PersonaGrid, PhoneFeed, StatBar, usePlayback } from './components/Lab.jsx'
+import Auth from './components/Auth.jsx'
+import Logo from './components/Logo.jsx'
 import Results from './components/Results.jsx'
 
 const STAGES = {
   queued: 'Starting…', understanding: 'Reading your ad…', scraping: 'Scanning Facebook Ads Library…',
-  analysing: 'Analysing competitors…', simulating: 'Showing ads to 30 buyers…', reviewing: 'Reviewing your hook & edge…', done: 'Done', error: 'Error',
-}
-
-function ClaudeMark({ size = 22 }) {
-  const rays = Array.from({ length: 12 }, (_, i) => i * 30)
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
-      {rays.map((a, i) => <rect key={a} x="11" y={i % 2 ? 2.5 : 1} width="2" height={i % 2 ? 8.5 : 10} rx="1" fill="#D97757" transform={`rotate(${a} 12 12)`} />)}
-    </svg>
-  )
+  analysing: 'Analysing competitors…', simulating: 'Running the scroll test…', reviewing: 'Reviewing your hook & edge…', done: 'Done', error: 'Error',
 }
 
 function InputPanel({ onSubmit, busy }) {
@@ -56,12 +49,31 @@ function InputPanel({ onSubmit, busy }) {
         <input placeholder="Your brand / page names, comma separated (optional)" value={brand} onChange={(e) => setBrand(e.target.value)} />
         <input className="cc" value={country} maxLength={2} onChange={(e) => setCountry(e.target.value.toUpperCase())} title="Ads Library country" />
       </div>
-      <button className="btn primary" disabled={!ok || busy}>{busy ? 'Running…' : 'Test it on 30 buyers →'}</button>
+      <button className="btn primary" disabled={!ok || busy}>{busy ? 'Running…' : 'Analyse my ad →'}</button>
     </form>
   )
 }
 
+const params = new URLSearchParams(location.search)
+
 export default function App() {
+  const [user, setUser] = useState(undefined) // undefined = checking, null = signed out
+  useEffect(() => {
+    fetch('/api/auth/me').then((r) => (r.ok ? r.json() : null)).then(async (d) => {
+      if (d?.user) return setUser(d.user)
+      if (params.has('demo')) { // landing page "Try the demo" link signs straight in
+        const r = await fetch('/api/auth/demo', { method: 'POST' })
+        if (r.ok) return setUser((await r.json()).user)
+      }
+      setUser(null)
+    }).catch(() => setUser(null))
+  }, [])
+  if (user === undefined) return <div className="auth-loading"><Logo size={34} /></div>
+  if (!user) return <Auth onAuthed={(u) => { history.replaceState(null, '', '/'); setUser(u) }} initialMode={params.get('mode') === 'signup' ? 'signup' : 'signin'} />
+  return <Portal user={user} onSignOut={async () => { await fetch('/api/auth/signout', { method: 'POST' }); setUser(null) }} />
+}
+
+function Portal({ user, onSignOut }) {
   const [job, setJob] = useState(null)
   const [err, setErr] = useState(null)
   const poll = useRef(null)
@@ -73,6 +85,7 @@ export default function App() {
     if (file) fd.append('file', file)
     try {
       const r = await fetch('/api/analyze', { method: 'POST', body: fd })
+      if (r.status === 401) return location.reload() // session expired: back to sign in
       if (!r.ok) throw new Error((await r.json()).detail || 'Request failed')
       const { job_id } = await r.json()
       clearInterval(poll.current)
@@ -122,15 +135,19 @@ export default function App() {
   return (
     <div className="app">
       <header className="top">
-        <div className="brand"><ClaudeMark /> <span>Persona Ad Lab</span></div>
-        <span className="muted">Claude-style · Facebook Ads Library · 30 simulated buyers</span>
+        <a className="brand" href="https://spyra.si"><Logo size={26} /></a>
+        <div className="userbar">
+          {user.demo && <span className="demo-pill">Demo account</span>}
+          <span className="muted">{user.name}</span>
+          <button className="btn ghost small" onClick={onSignOut}>Sign out</button>
+        </div>
       </header>
 
       <section className="hero">
         <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           Will your ad <span className="clay">survive the scroll?</span>
         </motion.h1>
-        <p className="sub">Drop in your ad. We pull your real competitors from the Facebook Ads Library, put everyone in one feed and let 30 AI buyers decide who wins the thumb.</p>
+        <p className="sub">Drop in your ad. We pull your real competitors from the Facebook Ads Library, put everyone in one feed and show you who wins the scroll.</p>
       </section>
 
       <StatBar adIdx={pb.idx} feedLen={job?.feed?.length} buyers={job?.personas?.length} stopped={live.stopped}
@@ -146,7 +163,7 @@ export default function App() {
           {job && (
             <div className="grid-head">
               <div className="eyebrow">The Scroll Test · live</div>
-              <h2>30 strangers. 3 seconds. <em>Will your ad stop their thumb?</em></h2>
+              <h2>Every thumb is a vote. <em>Watch your ad win them over.</em></h2>
               <p>Every card is an AI buyer scrolling the feed on the left. Orange means that ad just stopped them.</p>
             </div>
           )}

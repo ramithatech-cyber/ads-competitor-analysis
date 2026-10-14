@@ -110,7 +110,6 @@ export function FeedControls({ feed, pb }) {
 export function StatBar({ adIdx, feedLen, buyers, stopped, avgWatch, ctr, adsFound }) {
   const tiles = [
     { label: 'AD IN FEED', value: feedLen ? `${adIdx + 1}/${feedLen}` : '—', dark: true },
-    { label: 'BUYERS', value: buyers || 30, dark: true },
     { label: 'STOPPED', value: stopped ?? 0, accent: true },
     { label: 'AVG WATCH (s)', value: (avgWatch ?? 0).toFixed(1) },
     { label: 'CLICK RATE', value: `${(ctr ?? 0).toFixed(1)}%` },
@@ -152,7 +151,15 @@ export function PersonaGrid({ personas, playback, totals, busy }) {
             onMouseLeave={() => setHover(null)}
           >
             <div className="card-role">{p.role}</div>
-            <div className="card-face"><PixelAvatar seed={`${p.id}-${p.name}-${p.role}`} gender={p.gender} size={38} /></div>
+            <div className="card-face">
+              {/* Each buyer drops in and waves on arrival, then acts out its reaction (see .char / .act in styles.css). */}
+              <span key={`${p.id}-${p.name}`} className="char" style={{ '--d': `${pos * 45}ms`, '--d2': `${(pos % 7) * 230}ms` }}>
+                <span className="act"><PixelAvatar seed={`${p.id}-${p.name}-${p.role}`} gender={p.gender} size={38} /></span>
+                <span className="wave" aria-hidden="true">👋</span>
+                {state === 'stop' && <span key="stop" className="react" aria-hidden="true">{r?.clicked ? '👆' : '!'}</span>}
+                {state === 'pass' && <span key="pass" className="react pass" aria-hidden="true">…</span>}
+              </span>
+            </div>
             <div className="card-foot">
               <span className="tally">{totals?.[p.id] ?? 0}</span>
               <AnimatePresence>
@@ -225,7 +232,7 @@ export function PhoneFeed({ ad, job, result, stoppedNow }) {
                   {ad.cta && ad.cta.length <= 24 && <button>{ad.cta}</button>}
                 </div>
               )}
-              {result && <div className="post-stopped">{stoppedNow} of 30 stopped</div>}
+              {result && <div className="post-stopped">{stoppedNow} stopped</div>}
             </motion.div>
           ) : (
             <motion.div key="loading" className="post" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -60 }}>
@@ -259,7 +266,7 @@ const STEPS = [
   ['understanding', 'Reading your ad', '👀'],
   ['scraping', 'Hunting competitor ads', '🔍'],
   ['analysing', 'Sizing up rivals', '🧠'],
-  ['personas', 'Inviting 30 buyers', '🧑‍🤝‍🧑'],
+  ['personas', 'Inviting buyers', '🧑‍🤝‍🧑'],
   ['simulating', 'Starting the feed', '📱'],
 ]
 const BUBBLE = {
@@ -268,7 +275,7 @@ const BUBBLE = {
   understanding: ['Reading every word on your ad…', 'Spotting your hook and offer…'],
   scraping: ['Digging through the Facebook Ads Library…', 'Collecting ads your rivals are running right now…'],
   analysing: ['Comparing their hooks with yours…', 'Checking who runs the longest ads…'],
-  simulating: ['30 buyers are grabbing their phones…'],
+  simulating: ['Buyers are grabbing their phones…'],
 }
 const TIPS = [
   'Ads that run 60+ days are usually the winners.',
@@ -282,7 +289,7 @@ const ORDER = ['queued', 'understanding', 'scraping', 'analysing', 'simulating',
 const SCENES = [
   { key: 'drop', say: "Hi, I'm Scout! I test ads.", cap: 'You drop your ad', sub: 'Image, video or text' },
   { key: 'spy', say: 'Spying on your rivals… 🕵️', cap: 'I find your real competitors', sub: 'Live ads from the Facebook Ads Library' },
-  { key: 'feed', say: 'Who stops scrolling? 👀', cap: '30 AI buyers scroll the feed', sub: 'Orange = your ad stopped them' },
+  { key: 'feed', say: 'Who stops scrolling? 👀', cap: 'AI buyers scroll the feed', sub: 'Orange = your ad stopped them' },
   { key: 'plan', say: "Here's your playbook 🚀", cap: 'You get your score & fixes', sub: 'Plus a PDF report to share' },
 ]
 const SCENE_MS = 3600
@@ -347,7 +354,7 @@ function SceneFeed() {
           )
         })}
       </div>
-      <div className="sc-counter"><b><CountUp to={9} ms={2400} /></b> of 30 stopped <em>example</em></div>
+      <div className="sc-counter"><b><CountUp to={9} ms={2400} /></b> stopped <em>example</em></div>
     </div>
   )
 }
@@ -419,7 +426,7 @@ export function IdleStory() {
           <div><b>{s.cap}</b><small>{s.sub}</small></div>
         </motion.div>
       </AnimatePresence>
-      <div className="st-cta">👉 Try it: add your ad and tap <b>Test it on 30 buyers</b></div>
+      <div className="st-cta">👉 Try it: add your ad and tap <b>Analyse my ad</b></div>
     </div>
   )
 }

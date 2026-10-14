@@ -14,10 +14,11 @@ import traceback
 import uuid
 
 import uvicorn
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from core import auth
 from core.ad_review import review_ad
 from core.competitor_analysis import ads_dataframe, aggregate_advertisers, find_own_pages, run_analysis, screen_ads
 from core.head_to_head import head_to_head
@@ -30,6 +31,70 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 DIST = os.path.join(ROOT, "web", "dist")
 app = FastAPI(title="Persona Ad Portal")
 JOBS: dict[str, dict] = {}
+auth.init()
+
+
+def current_user(request: Request) -> dict:
+    user = auth.user_for(request.cookies.get(auth.COOKIE))
+    if not user:
+        raise HTTPException(401, "Please sign in")
+    return user
+
+
+def _own_job(job_id: str, user: dict) -> dict:
+    job = JOBS.get(job_id)
+    if not job or job.get("_owner") != user["id"]:  # other people's analyses look like they do not exist
+        raise HTTPException(404)
+    return job
+
+
+def _start_session(request: Request, response: Response, user: dict) -> dict:
+    response.set_cookie(auth.COOKIE, auth.new_session(user["id"]), max_age=auth.SESSION_DAYS * 86400, httponly=True,
+                        samesite="lax", secure=request.url.scheme == "https", path="/")
+    return {"user": user}
+
+
+def _ip(request: Request) -> str:
+    return (request.headers.get("x-forwarded-for") or (request.client.host if request.client else "")).split(",")[0].strip()
+
+
+@app.post("/api/auth/signup")
+async def sign_up(request: Request, response: Response):
+    body = await request.json()
+    try:
+        user = auth.sign_up(body.get("name"), body.get("email"), body.get("password"))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return _start_session(request, response, user)
+
+
+@app.post("/api/auth/signin")
+async def sign_in(request: Request, response: Response):
+    if auth.throttled(_ip(request)):
+        raise HTTPException(429, "Too many attempts. Please wait 15 minutes and try again.")
+    body = await request.json()
+    try:
+        user = auth.sign_in(body.get("email"), body.get("password"), _ip(request))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return _start_session(request, response, user)
+
+
+@app.post("/api/auth/demo")
+def demo(request: Request, response: Response):
+    return _start_session(request, response, auth.demo_user())
+
+
+@app.post("/api/auth/signout")
+def sign_out(request: Request, response: Response):
+    auth.end_session(request.cookies.get(auth.COOKIE))
+    response.delete_cookie(auth.COOKIE, path="/")
+    return {"ok": True}
+
+
+@app.get("/api/auth/me")
+def me(user: dict = Depends(current_user)):
+    return {"user": user}
 
 
 def _log(job, msg):
@@ -220,7 +285,8 @@ def run_job(job_id, kind, text, file_bytes, file_name, mime, brand, country, max
 
 @app.post("/api/analyze")
 async def analyze(kind: str = Form(...), text: str = Form(""), brand: str = Form(""), country: str = Form("IN"),
-                  max_ads: int = Form(50), n_keywords: int = Form(3), file: UploadFile | None = File(None)):
+                  max_ads: int = Form(50), n_keywords: int = Form(3), file: UploadFile | None = File(None),
+                  user: dict = Depends(current_user)):
     if kind not in ("text", "image", "video", "link"):
         raise HTTPException(400, "kind must be text, image, video or link")
     data = await file.read() if file else None
@@ -230,8 +296,13 @@ async def analyze(kind: str = Form(...), text: str = Form(""), brand: str = Form
         raise HTTPException(400, "Paste a full link starting with http:// or https://")
     if kind in ("image", "video") and not data:
         raise HTTPException(400, f"Upload a {kind}")
+    # One analysis at a time per account keeps API spend predictable with open sign-up.
+    if any(j.get("_owner") == user["id"] and j["stage"] not in ("done", "error") for j in JOBS.values()):
+        raise HTTPException(429, "The demo account is busy with another analysis. Try again in a few minutes, or create "
+                                 "a free account." if user["email"] == auth.DEMO_EMAIL else
+                            "You already have an analysis running. Wait for it to finish first.")
     job_id = uuid.uuid4().hex[:10]
-    JOBS[job_id] = {"id": job_id, "stage": "queued", "logs": [], "started": time.time()}
+    JOBS[job_id] = {"id": job_id, "stage": "queued", "logs": [], "started": time.time(), "_owner": user["id"]}
     threading.Thread(target=run_job, daemon=True, args=(job_id, kind, text, data, file.filename if file else "",
                                                          file.content_type if file else "", brand, country.upper(),
                                                          max_ads, n_keywords)).start()
@@ -239,16 +310,16 @@ async def analyze(kind: str = Form(...), text: str = Form(""), brand: str = Form
 
 
 @app.get("/api/jobs/{job_id}")
-def job_status(job_id: str):
-    job = JOBS.get(job_id)
+def job_status(job_id: str, user: dict = Depends(current_user)):
+    job = _own_job(job_id, user)
     if not job:
         raise HTTPException(404)
     return {k: v for k, v in job.items() if k not in ("report_html", "report_pdf") and not k.startswith("_")}
 
 
 @app.get("/api/jobs/{job_id}/video")
-def job_video(job_id: str):
-    job = JOBS.get(job_id)
+def job_video(job_id: str, user: dict = Depends(current_user)):
+    job = _own_job(job_id, user)
     path, mime = (job or {}).get("_video") or (None, None)
     if not path or not os.path.exists(path):
         raise HTTPException(404)
@@ -256,16 +327,16 @@ def job_video(job_id: str):
 
 
 @app.get("/api/jobs/{job_id}/report", response_class=HTMLResponse)
-def job_report(job_id: str):
-    job = JOBS.get(job_id)
+def job_report(job_id: str, user: dict = Depends(current_user)):
+    job = _own_job(job_id, user)
     if not job or "report_html" not in job:
         raise HTTPException(404, "Report not ready")
     return HTMLResponse(job["report_html"], headers={"Content-Disposition": 'attachment; filename="competitor_report.html"'})
 
 
 @app.get("/api/jobs/{job_id}/report.pdf")
-def job_report_pdf(job_id: str):
-    job = JOBS.get(job_id)
+def job_report_pdf(job_id: str, user: dict = Depends(current_user)):
+    job = _own_job(job_id, user)
     if not job or "report_html" not in job:
         raise HTTPException(404, "Report not ready")
     if not job.get("report_pdf") or not os.path.exists(job["report_pdf"]):
