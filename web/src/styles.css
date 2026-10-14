@@ -401,7 +401,7 @@ mark.dq::before { content: '\201C'; } mark.dq::after { content: '\201D'; }
 .auth-sub { margin: 0 0 20px; color: #444; font-size: 15px; }
 .auth form { display: grid; gap: 14px; }
 .auth label { display: grid; gap: 6px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
-.auth input { font: 500 16px Inter, sans-serif; padding: 12px 14px; border: 3px solid #111; background: #fff; color: #111; outline: none; text-transform: none; letter-spacing: 0; }
+.auth input { font: 500 16px Inter, sans-serif; padding: 12px 14px; border: 3px solid #111; border-radius: 0; background: #fff; color: #111; outline: none; text-transform: none; letter-spacing: 0; }
 .auth input:focus { background: #FFF6D6; box-shadow: 4px 4px 0 #FF5C39; }
 .auth-err { border: 3px solid #111; background: #FF5C39; color: #111; font-weight: 700; font-size: 14px; padding: 10px 12px; }
 .b-btn { font: 700 16px 'Space Grotesk', Inter, sans-serif; border: 3px solid #111; padding: 13px 18px; cursor: pointer; box-shadow: 5px 5px 0 #111; transition: transform .1s, box-shadow .1s; width: 100%; color: #111; }
