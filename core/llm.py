@@ -27,14 +27,28 @@ def get_client() -> OpenAI:
     return _client
 
 
+def _no_credits(e: Exception) -> bool:
+    """OpenAI reports an empty balance as a 429 like a rate limit, but waiting will never fix it."""
+    body = getattr(e, "body", None) or {}
+    code = (body.get("code") or body.get("type")) if isinstance(body, dict) else None
+    return code == "insufficient_quota" or "insufficient_quota" in str(e)
+
+
 def with_retry(call, attempts: int = 5):
     for i in range(attempts):
         try:
             return call()
+        except openai.AuthenticationError as e:
+            raise RuntimeError("The AI service is not configured correctly (invalid OpenAI API key). "
+                               "Please contact the Spyra admin.") from e
         except RETRYABLE as e:
+            if isinstance(e, openai.RateLimitError) and _no_credits(e):
+                raise RuntimeError("The AI service is out of credits right now, so the analysis could not run. "
+                                   "Please try again later or contact the Spyra admin.") from e
             if i == attempts - 1:
-                raise RuntimeError("Could not reach OpenAI (network connection problem). "
-                                   "Check your internet connection and try again.") from e
+                if isinstance(e, openai.RateLimitError):
+                    raise RuntimeError("The AI service is busy (rate limit reached). Please try again in a few minutes.") from e
+                raise RuntimeError("Could not reach the AI service (network problem). Please try again.") from e
             time.sleep(min(20, 2 * 2 ** i))
 
 
